@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MLiQ — Capstone Team Presentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  /* ── Design tokens ──────────────────────────────────────────────────── */
+  :root {
+    --ink:       #0D0D0B;
+    --ink-2:     #141310;
+    --ink-3:     #1E1C16;
+    --line:      #2E2C22;
+    --line-2:    #3A372C;
+    --gold:      #C9A86A;
+    --gold-soft: #D8C094;
+    --gold-dim:  rgba(201,168,106,0.18);
+    --cream:     #F5F1E8;
+    --cream-dim: #C9C4B5;
+    --taupe:     #8E8778;
+
+    --serif: "Cormorant Garamond", Georgia, serif;
+    --mono:  "JetBrains Mono", ui-monospace, monospace;
+
+    /* Easing */
+    --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-gentle: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    /* Type scale */
+    --t-hero:     118px;
+    --t-title:    72px;
+    --t-sub:      42px;
+    --t-body:     30px;
+    --t-small:    23px;
+    --t-label:    13px;
+
+    /* Layout */
+    --px: 120px;
+    --pt: 88px;
+    --pb: 76px;
+    --gap: 32px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  deck-stage:not(:defined) { visibility: hidden; }
+  html, body { background: #000; }
+
+  section {
+    background: var(--ink);
+    color: var(--cream);
+    font-family: var(--serif);
+    overflow: hidden;
+  }
+
+  /* ── Base slide frame ────────────────────────────────────────────────── */
+  .slide {
+    width: 100%;
+    height: 100%;
+    padding: var(--pt) var(--px) var(--pb);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+
+  /* Ambient light — top-right gold bloom + bottom-left shadow well */
+  .slide::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 110% 80% at 92% 4%, rgba(201,168,106,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse 90% 70% at 2% 98%, rgba(0,0,0,0.55) 0%, transparent 55%);
+  }
+
+  /* Film grain */
+  .slide::before {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    width: 200%; height: 200%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.022;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain 12s steps(8) infinite;
+  }
+  @keyframes grain {
+    0%   { transform: translate(0,0); }
+    12%  { transform: translate(-4%,-9%); }
+    25%  { transform: translate(-12%, 5%); }
+    37%  { transform: translate(6%,-22%); }
+    50%  { transform: translate(-4%, 22%); }
+    62%  { transform: translate(-12%, 8%); }
+    75%  { transform: translate(12%, 0%); }
+    87%  { transform: translate(2%,-30%); }
+    100% { transform: translate(0,0); }
+  }
+
+  .slide > * { position: relative; z-index: 1; }
+
+  /* ── Shared type ─────────────────────────────────────────────────────── */
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: var(--t-label);
+    font-weight: 500;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--gold);
+    gap: 18px;
+  }
+  .eyebrow .num { color: var(--taupe); font-size: 12px; }
+  .eyebrow .bar {
+    flex: 0 0 52px;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
+    transform-origin: left center;
+    opacity: 0.6;
+  }
+
+  .headline {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: var(--t-title);
+    line-height: 1.03;
+    letter-spacing: -0.015em;
+    color: var(--cream);
+    text-wrap: balance;
+  }
+
+  .lede {
+    font-size: var(--t-body);
+    line-height: 1.48;
+    color: var(--cream-dim);
+    max-width: 1140px;
+    text-wrap: pretty;
+  }
+
+  /* ── Footer ──────────────────────────────────────────────────────────── */
+  .footer {
+    position: absolute;
+    left: var(--px); right: var(--px);
+    bottom: 38px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--taupe);
+    z-index: 2;
+    opacity: 0.7;
+  }
+  .footer .wm { color: var(--gold); font-weight: 600; opacity: 1; }
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SLIDE 1 — PROJECT THEME
+  ────────────────────────────────────────────────────────────────────── */
+  .s1 { justify-content: space-between; }
+
+  .s1-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+  .wordmark {
+    font-family: var(--mono);
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: 0.55em;
+    color: var(--gold);
+  }
+  .s1-partner {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--taupe);
+    text-align: right;
+    line-height: 1.7;
+    text-transform: uppercase;
+  }
+  .s1-partner b { color: var(--cream-dim); font-weight: 500; }
+
+  .s1-mid { margin-top: 8px; }
+  .s1-tag {
+    font-style: italic;
+    font-size: var(--t-sub);
+    color: var(--taupe);
+    margin-bottom: 28px;
+    line-height: 1.2;
+  }
+  .s1-head {
+    font-size: var(--t-hero);
+    line-height: 0.95;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    color: var(--cream);
+  }
+  .s1-head em { font-style: italic; color: var(--gold-soft); font-weight: 500; }
+  .s1-sub {
+    margin-top: 36px;
+    font-size: 28px;
+    line-height: 1.5;
+    color: var(--cream-dim);
+    max-width: 1100px;
+    text-wrap: pretty;
+  }
+
+  /* Stats */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 1px solid var(--line);
+    padding-top: 4px;
+  }
+  .stat {
+    padding: 30px 40px 0 0;
+    border-right: 1px solid var(--line);
+  }
+  .stat:last-child { border-right: 0; padding-right: 0; }
+  .stat .fig {
+    font-size: 60px;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    transition: color 200ms ease;
+  }
+  .stat:hover .fig { color: var(--gold-soft); }
+  .stat .lab {
+    font-family: var(--mono);
+    font-size: var(--t-label);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--taupe);
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+  .stat .lab b { color: var(--cream-dim); font-weight: 500; }
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SLIDE 2 — TEAM IDENTITY
+  ────────────────────────────────────────────────────────────────────── */
+  .head-block > * + * { margin-top: 20px; }
+
+  .s2-grid {
+    margin-top: 44px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .member {
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 30px 32px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    /* hover handled below — transition split so entrance doesn't fight hover */
+    transition:
+      border-color 220ms ease,
+      box-shadow 220ms ease,
+      transform 220ms var(--ease-gentle);
+    cursor: default;
+  }
+  .member:hover {
+    border-color: rgba(201,168,106,0.38);
+    box-shadow:
+      0 0 0 1px rgba(201,168,106,0.10),
+      0 10px 36px rgba(0,0,0,0.45);
+    transform: translateY(-3px);
+  }
+  .member .mname {
+    font-size: 38px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--cream);
+    letter-spacing: -0.01em;
+  }
+  .member .contact {
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--gold-soft);
+    margin-top: 10px;
+    letter-spacing: 0.01em;
+    line-height: 1.75;
+    opacity: 0.85;
+  }
+  .member .contact .ph { color: var(--taupe); }
+  .member .rule {
+    height: 1px;
+    background: var(--line);
+    margin: 18px 0 14px;
+  }
+  .member .skills-lab {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--taupe);
+    margin-bottom: 12px;
+  }
+  .member .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+  }
+  .member .chip {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    color: var(--cream-dim);
+    background: var(--ink-3);
+    border: 1px solid var(--line-2);
+    border-radius: 100px;
+    padding: 4px 12px;
+    transition: border-color 150ms ease, color 150ms ease;
+  }
+  .member:hover .chip {
+    border-color: rgba(201,168,106,0.22);
+  }
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SLIDE 3 — DATA
+  ────────────────────────────────────────────────────────────────────── */
+  .s3-body {
+    margin-top: 40px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1.08fr 1fr;
+    gap: 72px;
+  }
+
+  .panel-lab {
+    font-family: var(--mono);
+    font-size: var(--t-label);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 22px;
+    opacity: 0.85;
+  }
+
+  /* Lifecycle flow */
+  .hub { display: flex; flex-direction: column; gap: 6px; }
+  .hub-row { display: flex; }
+  .hub-node {
+    font-family: var(--mono);
+    font-size: 17px;
+    letter-spacing: 0.03em;
+    padding: 14px 20px;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    background: var(--ink-2);
+    color: var(--cream-dim);
+    flex: 1;
+    line-height: 1.3;
+    transition: border-color 200ms ease;
+  }
+  .hub-node:hover { border-color: rgba(201,168,106,0.28); }
+  .hub-node.center {
+    border-color: rgba(201,168,106,0.55);
+    color: var(--gold);
+    background: rgba(201,168,106,0.06);
+    font-weight: 600;
+  }
+  .hub-node small {
+    display: block;
+    color: var(--taupe);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    margin-top: 5px;
+    text-transform: uppercase;
+  }
+  .hub-arrow {
+    color: var(--taupe);
+    font-size: 14px;
+    padding: 2px 0 2px 24px;
+    opacity: 0.6;
+  }
+
+  /* Dimensions */
+  .dims { margin-top: 24px; display: flex; flex-direction: column; }
+  .dim {
+    display: flex;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 21px;
+    color: var(--cream-dim);
+    line-height: 1.35;
+    gap: 20px;
+  }
+  .dim:last-child { border-bottom: 0; }
+  .dim .dk {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--taupe);
+    flex: 0 0 148px;
+    padding-top: 5px;
+  }
+  .dim .dv b { color: var(--cream); font-weight: 600; }
+
+  /* Event chips */
+  .evt-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .evt {
+    font-family: var(--mono);
+    font-size: 13px;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    color: var(--cream-dim);
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    padding: 5px 13px;
+    transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
+    cursor: default;
+  }
+  .evt:hover {
+    background: var(--ink-3);
+    border-color: rgba(201,168,106,0.28);
+  }
+  .evt.hi {
+    border-color: rgba(201,168,106,0.55);
+    color: var(--gold);
+  }
+  .evt.hi:hover { background: rgba(201,168,106,0.07); }
+
+  /* Facts grid */
+  .facts {
+    margin-top: 28px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .fact { background: var(--ink-2); padding: 16px 20px; }
+  .fact .fk {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--taupe);
+  }
+  .fact .fv {
+    font-size: 23px;
+    color: var(--cream);
+    margin-top: 5px;
+    font-weight: 500;
+  }
+  .fact .fv b { color: var(--gold); font-weight: 600; }
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SLIDE 4 — PROJECT GOALS
+  ────────────────────────────────────────────────────────────────────── */
+  .s4-body {
+    margin-top: 48px;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap: 72px;
+    align-items: start;
+  }
+
+  .venue-card {
+    background: var(--ink-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 40px 44px;
+    height: 100%;
+  }
+  .venue-card .vc-lab {
+    font-family: var(--mono);
+    font-size: var(--t-label);
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 30px;
+    opacity: 0.85;
+  }
+
+  .venue-goal {
+    display: flex;
+    align-items: flex-start;
+    gap: 22px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .venue-goal:first-of-type { padding-top: 0; }
+  .venue-goal:last-of-type { border-bottom: 0; padding-bottom: 0; }
+  .venue-goal .vg-icon {
+    flex-shrink: 0;
+    width: 34px; height: 34px;
+    border: 1px solid rgba(201,168,106,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 600;
+    margin-top: 5px;
+    transition: border-color 200ms ease, background 200ms ease;
+  }
+  .venue-goal:hover .vg-icon {
+    border-color: rgba(201,168,106,0.65);
+    background: rgba(201,168,106,0.06);
+  }
+  .venue-goal .vg-text {
+    font-size: 22px;
+    line-height: 1.4;
+    color: var(--cream-dim);
+    text-wrap: pretty;
+  }
+  .venue-goal .vg-text b { color: var(--cream); font-weight: 600; }
+
+  /* Project goals (right column) */
+  .goals { display: flex; flex-direction: column; }
+  .goal {
+    display: flex;
+    gap: 24px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .goal:first-child { padding-top: 0; }
+  .goal:last-child { border-bottom: 0; padding-bottom: 0; }
+  .goal .gn {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--gold);
+    flex-shrink: 0;
+    padding-top: 6px;
+    letter-spacing: 0.04em;
+    opacity: 0.8;
+  }
+  .goal .gt {
+    font-size: 27px;
+    line-height: 1.38;
+    color: var(--cream);
+    text-wrap: pretty;
+  }
+  .goal .gt b { color: var(--gold-soft); font-weight: 600; }
+
+  /* ──────────────────────────────────────────────────────────────────────
+     SLIDE 5 — NEXT STEPS
+  ────────────────────────────────────────────────────────────────────── */
+  .crisp {
+    margin-top: 52px;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+  }
+
+  .phase {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 26px 22px 28px;
+    background: var(--ink-2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition:
+      border-color 220ms ease,
+      box-shadow 220ms ease,
+      transform 220ms var(--ease-gentle);
+    cursor: default;
+  }
+  .phase:hover {
+    border-color: rgba(201,168,106,0.28);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+    transform: translateY(-3px);
+  }
+  .phase .pn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--taupe);
+    text-transform: uppercase;
+  }
+  .phase .pt {
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--cream-dim);
+    line-height: 1.1;
+  }
+  .phase .pd {
+    font-size: 18px;
+    line-height: 1.38;
+    color: var(--taupe);
+  }
+
+  .phase.now {
+    border-color: rgba(201,168,106,0.6);
+    background: rgba(201,168,106,0.06);
+  }
+  .phase.now .pn { color: var(--gold); }
+  .phase.now .pt { color: var(--gold-soft); }
+  .phase.now .pd { color: var(--cream-dim); }
+  .phase.now .tag {
+    position: absolute;
+    top: -1px; right: -1px;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background: var(--gold);
+    color: var(--ink);
+    padding: 5px 10px;
+    border-radius: 0 5px 0 8px;
+    font-weight: 600;
+  }
+
+  .next-strip {
+    margin-top: 42px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 48px;
+    border-top: 1px solid var(--line);
+    padding-top: 32px;
+  }
+  .ns { display: flex; gap: 22px; }
+  .ns .nsn {
+    font-family: var(--mono);
+    font-size: 18px;
+    color: var(--gold);
+    padding-top: 3px;
+    flex-shrink: 0;
+  }
+  .ns .nst {
+    font-size: 25px;
+    line-height: 1.42;
+    color: var(--cream-dim);
+    text-wrap: pretty;
+  }
+  .ns .nst b { color: var(--cream); font-weight: 600; }
+
+  /* ──────────────────────────────────────────────────────────────────────
+     ENTRANCE ANIMATIONS
+     Rule: base style = final visible state. Animate FROM hidden.
+     All gated on [data-deck-active] so print & reduced-motion work.
+  ────────────────────────────────────────────────────────────────────── */
+
+  /* ── Timing variables ─────────── */
+  :root {
+    --dur-fast:   0.38s;
+    --dur-base:   0.52s;
+    --dur-slow:   0.68s;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+
+    /* ── 1. Gold bar sweep (eyebrow accent) ─ */
+    .eyebrow .bar {
+      transform: scaleX(0);
+      transition: transform var(--dur-slow) var(--ease-out);
+      transition-delay: 0.1s;
+    }
+    [data-deck-active] .eyebrow .bar { transform: scaleX(1); }
+
+    /* ── 2. Fade + rise (generic) ─────────── */
+    .anim {
+      opacity: 0;
+      transform: translateY(26px);
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-out);
+    }
+    [data-deck-active] .anim                { opacity: 1; transform: none; }
+    [data-deck-active] .anim:nth-child(1)   { transition-delay: 0.0s; }
+    [data-deck-active] .anim:nth-child(2)   { transition-delay: 0.1s; }
+    [data-deck-active] .anim:nth-child(3)   { transition-delay: 0.2s; }
+    [data-deck-active] .anim:nth-child(4)   { transition-delay: 0.3s; }
+
+    /* ── 3. Stats — stagger up ────────────── */
+    .stat {
+      opacity: 0;
+      transform: translateY(18px);
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-out);
+    }
+    [data-deck-active] .stat                { opacity: 1; transform: none; }
+    [data-deck-active] .stat:nth-child(1)   { transition-delay: 0.32s; }
+    [data-deck-active] .stat:nth-child(2)   { transition-delay: 0.42s; }
+    [data-deck-active] .stat:nth-child(3)   { transition-delay: 0.52s; }
+    [data-deck-active] .stat:nth-child(4)   { transition-delay: 0.62s; }
+
+    /* ── 4. Member cards — cascade ────────── */
+    .member {
+      opacity: 0;
+      transform: translateY(20px);
+      /* entrance transition — hover overrides transform after settle */
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-out);
+    }
+    [data-deck-active] .member              { opacity: 1; transform: none; }
+    [data-deck-active] .member:nth-child(1) { transition-delay: 0.18s; }
+    [data-deck-active] .member:nth-child(2) { transition-delay: 0.26s; }
+    [data-deck-active] .member:nth-child(3) { transition-delay: 0.34s; }
+    [data-deck-active] .member:nth-child(4) { transition-delay: 0.42s; }
+    [data-deck-active] .member:nth-child(5) { transition-delay: 0.50s; }
+    [data-deck-active] .member:nth-child(6) { transition-delay: 0.58s; }
+    /* Hand hover back to the hover transition after cards have settled */
+    [data-deck-active] .member:hover {
+      transform: translateY(-3px);
+      transition:
+        border-color 220ms ease,
+        box-shadow 220ms ease,
+        transform 220ms var(--ease-gentle);
+    }
+
+    /* ── 5. Hub nodes flow down ───────────── */
+    .hub-node, .hub-arrow {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out),
+        border-color 200ms ease;
+    }
+    [data-deck-active] .hub-node,
+    [data-deck-active] .hub-arrow          { opacity: 1; transform: none; }
+    /* Row-by-row stagger */
+    [data-deck-active] .hub-row:nth-child(1) .hub-node { transition-delay: 0.22s; }
+    [data-deck-active] .hub-arrow:nth-child(2)          { transition-delay: 0.34s; }
+    [data-deck-active] .hub-row:nth-child(3) .hub-node  { transition-delay: 0.44s; }
+    [data-deck-active] .hub-arrow:nth-child(4)          { transition-delay: 0.54s; }
+    [data-deck-active] .hub-row:nth-child(5) .hub-node  { transition-delay: 0.64s; }
+    [data-deck-active] .hub-arrow:nth-child(6)          { transition-delay: 0.72s; }
+    [data-deck-active] .hub-row:nth-child(7) .hub-node  { transition-delay: 0.80s; }
+
+    /* ── 6. Venue card — scale in ─────────── */
+    .anim-scale {
+      opacity: 0;
+      transform: scale(0.96) translateY(12px);
+      transition:
+        opacity var(--dur-base) var(--ease-out),
+        transform var(--dur-base) var(--ease-out);
+      transition-delay: 0.15s;
+    }
+    [data-deck-active] .anim-scale { opacity: 1; transform: none; }
+
+    /* ── 7. Venue goals — slide from left ─── */
+    .venue-goal {
+      opacity: 0;
+      transform: translateX(-18px);
+      transition:
+        opacity 0.42s var(--ease-out),
+        transform 0.42s var(--ease-out);
+    }
+    [data-deck-active] .venue-goal             { opacity: 1; transform: none; }
+    [data-deck-active] .venue-goal:nth-child(1) { transition-delay: 0.22s; }
+    [data-deck-active] .venue-goal:nth-child(2) { transition-delay: 0.32s; }
+    [data-deck-active] .venue-goal:nth-child(3) { transition-delay: 0.42s; }
+    [data-deck-active] .venue-goal:nth-child(4) { transition-delay: 0.52s; }
+
+    /* ── 8. Project goals — slide from right ─ */
+    .goal {
+      opacity: 0;
+      transform: translateX(18px);
+      transition:
+        opacity 0.42s var(--ease-out),
+        transform 0.42s var(--ease-out);
+    }
+    [data-deck-active] .goal             { opacity: 1; transform: none; }
+    [data-deck-active] .goal:nth-child(1) { transition-delay: 0.22s; }
+    [data-deck-active] .goal:nth-child(2) { transition-delay: 0.32s; }
+    [data-deck-active] .goal:nth-child(3) { transition-delay: 0.42s; }
+    [data-deck-active] .goal:nth-child(4) { transition-delay: 0.52s; }
+
+    /* ── 9. Phase cards — wave up ─────────── */
+    .phase {
+      opacity: 0;
+      transform: translateY(22px);
+      transition:
+        opacity var(--dur-fast) var(--ease-out),
+        transform var(--dur-fast) var(--ease-out);
+    }
+    [data-deck-active] .phase              { opacity: 1; transform: none; }
+    [data-deck-active] .phase:nth-child(1) { transition-delay: 0.18s; }
+    [data-deck-active] .phase:nth-child(2) { transition-delay: 0.26s; }
+    [data-deck-active] .phase:nth-child(3) { transition-delay: 0.34s; }
+    [data-deck-active] .phase:nth-child(4) { transition-delay: 0.42s; }
+    [data-deck-active] .phase:nth-child(5) { transition-delay: 0.50s; }
+    [data-deck-active] .phase:nth-child(6) { transition-delay: 0.58s; }
+    [data-deck-active] .phase:hover {
+      transform: translateY(-3px);
+      transition:
+        border-color 220ms ease,
+        box-shadow 220ms ease,
+        transform 220ms var(--ease-gentle);
+    }
+
+    /* ── 10. Next strip ───────────────────── */
+    .ns {
+      opacity: 0;
+      transform: translateY(16px);
+      transition:
+        opacity 0.40s var(--ease-out),
+        transform 0.40s var(--ease-out);
+    }
+    [data-deck-active] .ns             { opacity: 1; transform: none; }
+    [data-deck-active] .ns:nth-child(1) { transition-delay: 0.72s; }
+    [data-deck-active] .ns:nth-child(2) { transition-delay: 0.82s; }
+
+    /* ── 11. "We are here" pulse ──────────── */
+    @keyframes now-pulse {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(201,168,106,0.45), 0 0 14px rgba(201,168,106,0.06); }
+      50%       { box-shadow: 0 0 0 1px rgba(201,168,106,0.80), 0 0 28px rgba(201,168,106,0.15); }
+    }
+    [data-deck-active] .phase.now {
+      animation: now-pulse 3s ease-in-out infinite;
+      animation-delay: 0.9s;
+    }
+  }
+
+  /* ── Print: everything visible, no transforms ─────────────────────── */
+  @media print {
+    .anim, .anim-scale, .stat, .member, .venue-goal, .goal,
+    .phase, .hub-node, .hub-arrow, .ns {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+    .eyebrow .bar { transform: scaleX(1) !important; }
+  }
+</style>
+</head>
+<body>
+<deck-stage width="1920" height="1080">
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SLIDE 1 — PROJECT THEME
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section data-label="Theme">
+    <div class="slide s1">
+
+      <div class="s1-top anim">
+        <div class="wordmark">MLiQ</div>
+        <div class="s1-partner">Capstone · Team Presentation<br /><b>In partnership with The Glasshouses</b></div>
+      </div>
+
+      <div class="s1-mid anim">
+        <div class="eyebrow">
+          <span class="num">01</span>
+          <span class="bar"></span>
+          Project Theme
+        </div>
+        <div class="s1-tag">A dynamic lead-pricing engine for standalone luxury event venues.</div>
+        <h1 class="s1-head">Price the date,<br />not the <em>lead.</em></h1>
+        <p class="s1-sub">Event-space pricing has no public benchmark, and a fixed-cost venue loses money on every day it sits empty. MLiQ quotes each incoming lead by the opportunity cost of committing the date now — turning an unsold day from a quiet loss into a priced decision.</p>
+      </div>
+
+      <div class="stat-row anim">
+        <div class="stat">
+          <div class="fig">223</div>
+          <div class="lab">Booked event-days<br /><b>in 2025</b></div>
+        </div>
+        <div class="stat">
+          <div class="fig">~80</div>
+          <div class="lab">In-season days<br /><b>left empty</b></div>
+        </div>
+        <div class="stat">
+          <div class="fig">$111K</div>
+          <div class="lab">Average revenue<br /><b>per booked day</b></div>
+        </div>
+        <div class="stat">
+          <div class="fig">~$8.9M</div>
+          <div class="lab">Uncaptured capacity<br /><b>the engine fights for</b></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SLIDE 2 — TEAM IDENTITY
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section data-label="Team">
+    <div class="slide">
+
+      <div class="head-block anim">
+        <div class="eyebrow">
+          <span class="num">02</span>
+          <span class="bar"></span>
+          Team Identity
+        </div>
+        <h2 class="headline">Six people, three disciplines.</h2>
+        <p class="lede">Balanced by design — storytelling &amp; delivery, writing &amp; editing, and modeling &amp; engineering all covered within the group.</p>
+      </div>
+
+      <div class="s2-grid">
+
+        <div class="member">
+          <div class="mname">Daivik Suresh</div>
+          <div class="contact">ds8607@stern.nyu.edu</div>
+          <div class="rule"></div>
+          <div class="skills-lab">Skills</div>
+          <div class="chips">
+            <span class="chip">Presentation</span>
+            <span class="chip">Public Speaking</span>
+            <span class="chip">Storytelling</span>
+            <span class="chip">Writing</span>
+            <span class="chip">Copyediting</span>
+          </div>
+        </div>
+
+        <div class="member">
+          <div class="mname">Katy Arons</div>
+          <div class="contact">kha6892@stern.nyu.edu</div>
+          <div class="rule"></div>
+          <div class="skills-lab">Skills</div>
+          <div class="chips">
+            <span class="chip">Project Management</span>
+            <span class="chip">Presentation</span>
+            <span class="chip">Public Speaking</span>
+            <span class="chip">Storytelling</span>
+          </div>
+        </div>
+
+        <div class="member">
+          <div class="mname">Kim Miller</div>
+          <div class="contact">km7213@stern.nyu.edu</div>
+          <div class="rule"></div>
+          <div class="skills-lab">Skills</div>
+          <div class="chips">
+            <span class="chip">Writing</span>
+            <span class="chip">Copyediting</span>
+            <span class="chip">Public Speaking</span>
+            <span class="chip">Storytelling</span>
+          </div>
+        </div>
+
+        <div class="member">
+          <div class="mname">Luka Kvirikadze</div>
+          <div class="contact">lk3584@stern.nyu.edu<br /><span class="ph">770 289 7485</span></div>
+          <div class="rule"></div>
+          <div class="skills-lab">Skills</div>
+          <div class="chips">
+            <span class="chip">Modeling — Econometrics / ML</span>
+            <span class="chip">Data Mining</span>
+            <span class="chip">R · Python · SQL</span>
+            <span class="chip">Big Data · Shiny</span>
+          </div>
+        </div>
+
+        <div class="member">
+          <div class="mname">Nicole Ng</div>
+          <div class="contact">nn3150@stern.nyu.edu</div>
+          <div class="rule"></div>
+          <div class="skills-lab">Skills</div>
+          <div class="chips">
+            <span class="chip">Writing</span>
+            <span class="chip">Copyediting</span>
+            <span class="chip">Project Management</span>
+          </div>
+        </div>
+
+        <div class="member">
+          <div class="mname">Sucaina Thyma</div>
+          <div class="contact">st6076@stern.nyu.edu<br /><span class="ph">(516) 761-6674</span></div>
+          <div class="rule"></div>
+          <div class="skills-lab">Skills</div>
+          <div class="chips">
+            <span class="chip">Writing</span>
+            <span class="chip">Copyediting</span>
+            <span class="chip">Project Management</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="footer"><span class="wm">MLiQ</span><span>02 — Team Identity</span></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SLIDE 3 — DATA TO BE ANALYZED
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section data-label="Data">
+    <div class="slide">
+
+      <div class="head-block anim">
+        <div class="eyebrow">
+          <span class="num">03</span>
+          <span class="bar"></span>
+          Data to Be Analyzed
+        </div>
+        <h2 class="headline">One source of truth: Salesforce.</h2>
+        <p class="lede">The Glasshouses runs its full event lifecycle in Salesforce — every date, price and cost already captured and labeled. We train on proprietary history, both held and lost.</p>
+      </div>
+
+      <div class="s3-body">
+
+        <div class="anim">
+          <div class="panel-lab">The lifecycle</div>
+          <div class="hub">
+            <div class="hub-row"><div class="hub-node">Lead <small>Inbound · Outbound · Renewal · Referral</small></div></div>
+            <div class="hub-arrow">↓</div>
+            <div class="hub-row"><div class="hub-node center">Opportunity <small>Held &amp; Lost — the central hub</small></div></div>
+            <div class="hub-arrow">↓</div>
+            <div class="hub-row"><div class="hub-node">Reservation <small>Venue · Dates · Days Booked</small></div></div>
+            <div class="hub-arrow">↓</div>
+            <div class="hub-row"><div class="hub-node">Invoicing &amp; Deposits <small>Amount · Fixed Cost</small></div></div>
+          </div>
+
+          <div class="facts">
+            <div class="fact"><div class="fk">Venues</div><div class="fv"><b>4</b> total · <b>1</b> main</div></div>
+            <div class="fact"><div class="fk">Location</div><div class="fv">New York · all indoor</div></div>
+            <div class="fact"><div class="fk">Per venue</div><div class="fv">minimum capacity</div></div>
+            <div class="fact"><div class="fk">Per date</div><div class="fv">days remaining</div></div>
+          </div>
+        </div>
+
+        <div class="anim">
+          <div class="panel-lab">What each opportunity carries</div>
+          <div class="dims">
+            <div class="dim"><div class="dk">Status</div><div class="dv"><b>Held vs. lost</b> — won bookings and the leads that got away</div></div>
+            <div class="dim"><div class="dk">Event type</div><div class="dv">drives demand &amp; <b>seasonality</b></div></div>
+            <div class="dim"><div class="dk">Reservation</div><div class="dv">set dates &amp; <b>days booked out</b></div></div>
+            <div class="dim"><div class="dk">Economics</div><div class="dv">quoted amount, deposit &amp; <b>fixed daily cost</b></div></div>
+          </div>
+
+          <div class="panel-lab" style="margin-top:34px;">
+            Event types
+            <span style="color:var(--taupe);text-transform:none;letter-spacing:0;font-size:11px;font-weight:400;"> — food, DJ, drinks, catering &amp; cleaning all booked separately</span>
+          </div>
+          <div class="evt-chips">
+            <span class="evt hi">Wedding</span>
+            <span class="evt hi">Social Private</span>
+            <span class="evt">Gala</span>
+            <span class="evt">Reception</span>
+            <span class="evt">Bar / Bat Mitzvah</span>
+            <span class="evt">Fashion Show</span>
+            <span class="evt">Product Launch</span>
+            <span class="evt">Press Event</span>
+            <span class="evt">Conference</span>
+            <span class="evt">Trade Show</span>
+            <span class="evt">Photo Shoot</span>
+            <span class="evt">Art Fair</span>
+            <span class="evt">Holiday Party</span>
+            <span class="evt">Fundraiser</span>
+            <span class="evt">Upfront / Newfront</span>
+            <span class="evt">Ticketed Event</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="footer"><span class="wm">MLiQ</span><span>03 — Data to Be Analyzed</span></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SLIDE 4 — PROJECT GOALS
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section data-label="Goals">
+    <div class="slide">
+
+      <div class="head-block anim">
+        <div class="eyebrow">
+          <span class="num">04</span>
+          <span class="bar"></span>
+          Project Goals
+        </div>
+        <h2 class="headline">Turn every empty date into a priced decision.</h2>
+      </div>
+
+      <div class="s4-body">
+
+        <!-- Left — Venue goals (from theglasshouses.com) -->
+        <div class="venue-card anim-scale">
+          <div class="vc-lab">The Glasshouses — what they're optimizing for</div>
+
+          <div class="venue-goal">
+            <div class="vg-icon">01</div>
+            <div class="vg-text"><b>Fill the calendar</b> — maximize booked days across all four venues, especially during peak seasons</div>
+          </div>
+
+          <div class="venue-goal">
+            <div class="vg-icon">02</div>
+            <div class="vg-text"><b>Deliver remarkable experiences</b> — maintain the prestige of NYC's preeminent private event space across 75,000 sq ft</div>
+          </div>
+
+          <div class="venue-goal">
+            <div class="vg-icon">03</div>
+            <div class="vg-text"><b>Win the right events</b> — attract galas, weddings, product launches and marquee clients that match venue scale &amp; brand</div>
+          </div>
+
+          <div class="venue-goal">
+            <div class="vg-icon">04</div>
+            <div class="vg-text"><b>Remove pricing guesswork</b> — replace judgment calls with a defensible, data-backed quote for every incoming lead</div>
+          </div>
+        </div>
+
+        <!-- Right — MLiQ goals -->
+        <div class="goals">
+          <div class="goal">
+            <div class="gn">01</div>
+            <div class="gt">Give the sales team a <b>defensible price benchmark</b> for every incoming lead — replacing case-by-case judgment.</div>
+          </div>
+          <div class="goal">
+            <div class="gn">02</div>
+            <div class="gt">Quote each lead by the <b>opportunity cost</b> of committing the date, netted against the fixed cost of an empty day.</div>
+          </div>
+          <div class="goal">
+            <div class="gn">03</div>
+            <div class="gt">Recover the <b>~$8.9M</b> of uncaptured in-season capacity that leaks out as unsold days.</div>
+          </div>
+          <div class="goal">
+            <div class="gn">04</div>
+            <div class="gt">Ship a <b>production tool</b> that runs on every quote and writes back to Salesforce — with human overrides.</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="footer"><span class="wm">MLiQ</span><span>04 — Project Goals</span></div>
+  </section>
+
+  <!-- ═══════════════════════════════════════════════════════════════════
+       SLIDE 5 — IMMEDIATE NEXT STEPS
+  ══════════════════════════════════════════════════════════════════════ -->
+  <section data-label="Next Steps">
+    <div class="slide">
+
+      <div class="head-block anim">
+        <div class="eyebrow">
+          <span class="num">05</span>
+          <span class="bar"></span>
+          Immediate Next Steps
+        </div>
+        <h2 class="headline">Start with the business, then the data.</h2>
+        <p class="lede">We follow CRISP-DM, the standard cycle for data-mining projects. The first turn is business understanding — pinning down the decision and the success metric with The Glasshouses before any modeling begins.</p>
+      </div>
+
+      <div class="crisp">
+        <div class="phase now">
+          <span class="tag">We are here</span>
+          <div class="pn">01</div>
+          <div class="pt">Business Understanding</div>
+          <div class="pd">Frame the decision &amp; success metric with the venue.</div>
+        </div>
+        <div class="phase">
+          <div class="pn">02</div>
+          <div class="pt">Data Understanding</div>
+          <div class="pd">Explore the Salesforce history; profile held &amp; lost leads.</div>
+        </div>
+        <div class="phase">
+          <div class="pn">03</div>
+          <div class="pt">Data Preparation</div>
+          <div class="pd">Pull, clean &amp; feature-engineer; recover lost leads.</div>
+        </div>
+        <div class="phase">
+          <div class="pn">04</div>
+          <div class="pt">Modeling</div>
+          <div class="pd">Train the value &amp; demand-probability models.</div>
+        </div>
+        <div class="phase">
+          <div class="pn">05</div>
+          <div class="pt">Evaluation</div>
+          <div class="pd">Backtest against the baseline; calibrate the rule.</div>
+        </div>
+        <div class="phase">
+          <div class="pn">06</div>
+          <div class="pt">Deployment</div>
+          <div class="pd">Wire into the app &amp; back to Salesforce; hand to sales.</div>
+        </div>
+      </div>
+
+      <div class="next-strip">
+        <div class="ns">
+          <div class="nsn">→</div>
+          <div class="nst"><b>Lock the business problem.</b> Confirm the decision, constraints &amp; success metric with The Glasshouses.</div>
+        </div>
+        <div class="ns">
+          <div class="nsn">→</div>
+          <div class="nst"><b>Stand up the data.</b> Pull and clean the Salesforce export, recover lost leads, begin feature engineering.</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="footer"><span class="wm">MLiQ</span><span>05 — Immediate Next Steps</span></div>
+  </section>
+
+</deck-stage>
+<script src="deck-stage.js"></script>
+</body>
+</html>
