@@ -765,24 +765,24 @@
     /* 12. Slide 2 — member name + card border glow */
     @keyframes name-glow {
       0%, 100% { text-shadow: none; }
-      50%       { text-shadow: 0 0 28px rgba(201,168,106,0.22), 0 0 56px rgba(201,168,106,0.08); }
+      50%       { text-shadow: 0 0 36px rgba(201,168,106,0.50), 0 0 72px rgba(201,168,106,0.20); }
     }
     @keyframes card-glow {
       0%, 100% { border-color: var(--line); box-shadow: none; }
-      50%       { border-color: rgba(201,168,106,0.25); box-shadow: 0 0 0 1px rgba(201,168,106,0.10), 0 4px 28px rgba(0,0,0,0.28); }
+      50%       { border-color: rgba(201,168,106,0.52); box-shadow: 0 0 0 1px rgba(201,168,106,0.24), 0 6px 36px rgba(0,0,0,0.36); }
     }
     [data-deck-active] .member:nth-child(1) { animation: card-glow 5s ease-in-out infinite 0.0s; }
-    [data-deck-active] .member:nth-child(2) { animation: card-glow 5s ease-in-out infinite 0.9s; }
-    [data-deck-active] .member:nth-child(3) { animation: card-glow 5s ease-in-out infinite 1.8s; }
-    [data-deck-active] .member:nth-child(4) { animation: card-glow 5s ease-in-out infinite 2.7s; }
-    [data-deck-active] .member:nth-child(5) { animation: card-glow 5s ease-in-out infinite 3.6s; }
-    [data-deck-active] .member:nth-child(6) { animation: card-glow 5s ease-in-out infinite 4.5s; }
+    [data-deck-active] .member:nth-child(2) { animation: card-glow 5s ease-in-out infinite 0.5s; }
+    [data-deck-active] .member:nth-child(3) { animation: card-glow 5s ease-in-out infinite 1.0s; }
+    [data-deck-active] .member:nth-child(4) { animation: card-glow 5s ease-in-out infinite 1.5s; }
+    [data-deck-active] .member:nth-child(5) { animation: card-glow 5s ease-in-out infinite 2.0s; }
+    [data-deck-active] .member:nth-child(6) { animation: card-glow 5s ease-in-out infinite 2.5s; }
     [data-deck-active] .member:nth-child(1) .mname { animation: name-glow 5s ease-in-out infinite 0.0s; }
-    [data-deck-active] .member:nth-child(2) .mname { animation: name-glow 5s ease-in-out infinite 0.9s; }
-    [data-deck-active] .member:nth-child(3) .mname { animation: name-glow 5s ease-in-out infinite 1.8s; }
-    [data-deck-active] .member:nth-child(4) .mname { animation: name-glow 5s ease-in-out infinite 2.7s; }
-    [data-deck-active] .member:nth-child(5) .mname { animation: name-glow 5s ease-in-out infinite 3.6s; }
-    [data-deck-active] .member:nth-child(6) .mname { animation: name-glow 5s ease-in-out infinite 4.5s; }
+    [data-deck-active] .member:nth-child(2) .mname { animation: name-glow 5s ease-in-out infinite 0.5s; }
+    [data-deck-active] .member:nth-child(3) .mname { animation: name-glow 5s ease-in-out infinite 1.0s; }
+    [data-deck-active] .member:nth-child(4) .mname { animation: name-glow 5s ease-in-out infinite 1.5s; }
+    [data-deck-active] .member:nth-child(5) .mname { animation: name-glow 5s ease-in-out infinite 2.0s; }
+    [data-deck-active] .member:nth-child(6) .mname { animation: name-glow 5s ease-in-out infinite 2.5s; }
 
     /* 13. Slide 3 — hub lifecycle travelling signal */
     @keyframes node-signal {
@@ -825,6 +825,19 @@
     [data-deck-active] .goal:nth-child(2) { animation: goal-scan 4s ease-in-out infinite 1s; }
     [data-deck-active] .goal:nth-child(3) { animation: goal-scan 4s ease-in-out infinite 2s; }
     [data-deck-active] .goal:nth-child(4) { animation: goal-scan 4s ease-in-out infinite 3s; }
+
+    /* 15. Slide 5 — CRISP-DM process flow signal */
+    @keyframes phase-flow {
+      0%   { box-shadow: 0 0 0 1px rgba(201,168,106,0.62), 0 0 32px rgba(201,168,106,0.18), inset 0 0 20px rgba(201,168,106,0.05); }
+      16%  { box-shadow: none; }
+      100% { box-shadow: none; }
+    }
+    [data-deck-active] .phase:nth-child(1) { animation: phase-flow 9s ease-in-out infinite 0.0s; }
+    [data-deck-active] .phase:nth-child(2) { animation: phase-flow 9s ease-in-out infinite 1.5s; }
+    [data-deck-active] .phase:nth-child(3) { animation: phase-flow 9s ease-in-out infinite 3.0s; }
+    [data-deck-active] .phase:nth-child(4) { animation: phase-flow 9s ease-in-out infinite 4.5s; }
+    [data-deck-active] .phase:nth-child(5) { animation: phase-flow 9s ease-in-out infinite 6.0s; }
+    [data-deck-active] .phase:nth-child(6) { animation: phase-flow 9s ease-in-out infinite 7.5s; }
   }
 
   /* ── Print ───────────────────────────────────────────────────────────── */
@@ -1196,39 +1209,46 @@
 <script>
 (function () {
   var deck = document.querySelector('deck-stage');
-  var rafIds = [], staggers = [], loopTimer = null;
+  var rafIds = [], timers = [], loopTimer = null;
 
   function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
 
-  function runCounter(el) {
+  function runCounter(el, done) {
     var target   = parseFloat(el.dataset.target);
     var prefix   = el.dataset.prefix  || '';
     var suffix   = el.dataset.suffix  || '';
     var decimals = parseInt(el.dataset.decimals || '0', 10);
-    var dur = 1800, start = null;
+    var dur = 1400, start = null;
     function tick(ts) {
       if (!start) start = ts;
       var p = Math.min((ts - start) / dur, 1);
       el.textContent = prefix + (target * easeOut(p)).toFixed(decimals) + suffix;
-      if (p < 1) rafIds.push(requestAnimationFrame(tick));
+      if (p < 1) { rafIds.push(requestAnimationFrame(tick)); }
+      else if (done) { done(); }
     }
     rafIds.push(requestAnimationFrame(tick));
   }
 
   function stop() {
     rafIds.forEach(cancelAnimationFrame); rafIds = [];
-    staggers.forEach(clearTimeout);       staggers = [];
+    timers.forEach(clearTimeout);         timers = [];
     clearTimeout(loopTimer);              loopTimer = null;
   }
 
   function go() {
     stop();
-    var figs = document.querySelectorAll('section[data-label="Theme"] .fig[data-target]');
-    figs.forEach(function (el, i) {
-      el.textContent = (el.dataset.prefix || '') + '0' + (el.dataset.suffix || '');
-      staggers.push(setTimeout(function () { runCounter(el); }, i * 150));
+    var figs = Array.from(document.querySelectorAll('section[data-label="Theme"] .fig[data-target]'));
+    figs.forEach(function (el) {
+      var d = parseInt(el.dataset.decimals || '0', 10);
+      el.textContent = (el.dataset.prefix || '') + (0).toFixed(d) + (el.dataset.suffix || '');
     });
-    loopTimer = setTimeout(go, 1800 + (figs.length - 1) * 150 + 2000);
+    function next(i) {
+      if (i >= figs.length) { loopTimer = setTimeout(go, 2000); return; }
+      runCounter(figs[i], function () {
+        timers.push(setTimeout(function () { next(i + 1); }, 280));
+      });
+    }
+    next(0);
   }
 
   function resetFigs() {
@@ -1245,7 +1265,6 @@
     else { stop(); resetFigs(); }
   });
 
-  // handle initial active state if deck starts on slide 1
   var first = document.querySelector('section[data-label="Theme"]');
   if (first && first.hasAttribute('data-deck-active')) go();
 })();
