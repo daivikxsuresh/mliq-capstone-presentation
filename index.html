@@ -17,7 +17,6 @@
     --line-2:    #3A372C;
     --gold:      #C9A86A;
     --gold-soft: #D8C094;
-    --gold-dim:  rgba(201,168,106,0.18);
     --cream:     #F5F1E8;
     --cream-dim: #C9C4B5;
     --taupe:     #8E8778;
@@ -25,24 +24,25 @@
     --serif: "Cormorant Garamond", Georgia, serif;
     --mono:  "JetBrains Mono", ui-monospace, monospace;
 
-    /* Easing */
-    --ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
-    --ease-gentle: cubic-bezier(0.25, 1, 0.5, 1);
-    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
     /* Type scale */
-    --t-hero:     118px;
-    --t-title:    72px;
-    --t-sub:      42px;
-    --t-body:     30px;
-    --t-small:    23px;
-    --t-label:    13px;
+    --t-hero:  118px;
+    --t-title:  72px;
+    --t-sub:    42px;
+    --t-body:   30px;
+    --t-small:  23px;
+    --t-label:  13px;
 
     /* Layout */
-    --px: 120px;
-    --pt: 88px;
-    --pb: 76px;
-    --gap: 32px;
+    --px: 140px;
+    --pt: 100px;
+    --pb:  84px;
+
+    /* Animation durations */
+    --dur-fast: 0.42s;
+    --dur-base: 0.58s;
+    --dur-slow: 0.75s;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -66,7 +66,7 @@
     position: relative;
   }
 
-  /* Ambient light — top-right gold bloom + bottom-left shadow well */
+  /* Ambient light */
   .slide::after {
     content: "";
     position: absolute;
@@ -78,7 +78,7 @@
       radial-gradient(ellipse 90% 70% at 2% 98%, rgba(0,0,0,0.55) 0%, transparent 55%);
   }
 
-  /* Film grain */
+  /* Film grain — subtle, cleaner on projectors */
   .slide::before {
     content: "";
     position: absolute;
@@ -86,7 +86,7 @@
     width: 200%; height: 200%;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.022;
+    opacity: 0.018;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     animation: grain 12s steps(8) infinite;
   }
@@ -122,7 +122,7 @@
     height: 1px;
     background: linear-gradient(90deg, var(--gold) 0%, transparent 100%);
     transform-origin: left center;
-    opacity: 0.6;
+    opacity: 0.5;
   }
 
   .headline {
@@ -137,7 +137,7 @@
 
   .lede {
     font-size: var(--t-body);
-    line-height: 1.48;
+    line-height: 1.55;
     color: var(--cream-dim);
     max-width: 1140px;
     text-wrap: pretty;
@@ -157,9 +157,9 @@
     text-transform: uppercase;
     color: var(--taupe);
     z-index: 2;
-    opacity: 0.7;
+    opacity: 0.55;
   }
-  .footer .wm { color: var(--gold); font-weight: 600; opacity: 1; }
+  .footer .wm { color: var(--gold); font-weight: 600; }
 
   /* ──────────────────────────────────────────────────────────────────────
      SLIDE 1 — PROJECT THEME
@@ -207,8 +207,8 @@
   .s1-head em { font-style: italic; color: var(--gold-soft); font-weight: 500; }
   .s1-sub {
     margin-top: 36px;
-    font-size: 28px;
-    line-height: 1.5;
+    font-size: 29px;
+    line-height: 1.56;
     color: var(--cream-dim);
     max-width: 1100px;
     text-wrap: pretty;
@@ -222,7 +222,7 @@
     padding-top: 4px;
   }
   .stat {
-    padding: 30px 40px 0 0;
+    padding: 36px 48px 0 0;
     border-right: 1px solid var(--line);
   }
   .stat:last-child { border-right: 0; padding-right: 0; }
@@ -232,16 +232,14 @@
     color: var(--gold);
     line-height: 1;
     letter-spacing: -0.02em;
-    transition: color 200ms ease;
   }
-  .stat:hover .fig { color: var(--gold-soft); }
   .stat .lab {
     font-family: var(--mono);
     font-size: var(--t-label);
     letter-spacing: 0.18em;
     text-transform: uppercase;
     color: var(--taupe);
-    margin-top: 16px;
+    margin-top: 20px;
     line-height: 1.6;
   }
   .stat .lab b { color: var(--cream-dim); font-weight: 500; }
@@ -257,30 +255,16 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(2, 1fr);
-    gap: 20px;
+    gap: 28px;
   }
 
   .member {
     background: var(--ink-2);
     border: 1px solid var(--line);
     border-radius: 6px;
-    padding: 30px 32px 28px;
+    padding: 34px 36px 32px;
     display: flex;
     flex-direction: column;
-    gap: 0;
-    /* hover handled below — transition split so entrance doesn't fight hover */
-    transition:
-      border-color 220ms ease,
-      box-shadow 220ms ease,
-      transform 220ms var(--ease-gentle);
-    cursor: default;
-  }
-  .member:hover {
-    border-color: rgba(201,168,106,0.38);
-    box-shadow:
-      0 0 0 1px rgba(201,168,106,0.10),
-      0 10px 36px rgba(0,0,0,0.45);
-    transform: translateY(-3px);
   }
   .member .mname {
     font-size: 38px;
@@ -302,7 +286,7 @@
   .member .rule {
     height: 1px;
     background: var(--line);
-    margin: 18px 0 14px;
+    margin: 22px 0 16px;
   }
   .member .skills-lab {
     font-family: var(--mono);
@@ -328,10 +312,6 @@
     border: 1px solid var(--line-2);
     border-radius: 100px;
     padding: 4px 12px;
-    transition: border-color 150ms ease, color 150ms ease;
-  }
-  .member:hover .chip {
-    border-color: rgba(201,168,106,0.22);
   }
 
   /* ──────────────────────────────────────────────────────────────────────
@@ -342,7 +322,7 @@
     flex: 1;
     display: grid;
     grid-template-columns: 1.08fr 1fr;
-    gap: 72px;
+    gap: 80px;
   }
 
   .panel-lab {
@@ -355,23 +335,20 @@
     opacity: 0.85;
   }
 
-  /* Lifecycle flow */
-  .hub { display: flex; flex-direction: column; gap: 6px; }
+  .hub { display: flex; flex-direction: column; gap: 8px; }
   .hub-row { display: flex; }
   .hub-node {
     font-family: var(--mono);
     font-size: 17px;
     letter-spacing: 0.03em;
-    padding: 14px 20px;
+    padding: 16px 22px;
     border: 1px solid var(--line);
     border-radius: 5px;
     background: var(--ink-2);
     color: var(--cream-dim);
     flex: 1;
     line-height: 1.3;
-    transition: border-color 200ms ease;
   }
-  .hub-node:hover { border-color: rgba(201,168,106,0.28); }
   .hub-node.center {
     border-color: rgba(201,168,106,0.55);
     color: var(--gold);
@@ -393,15 +370,14 @@
     opacity: 0.6;
   }
 
-  /* Dimensions */
   .dims { margin-top: 24px; display: flex; flex-direction: column; }
   .dim {
     display: flex;
-    padding: 13px 0;
+    padding: 16px 0;
     border-bottom: 1px solid var(--line);
-    font-size: 21px;
+    font-size: 22px;
     color: var(--cream-dim);
-    line-height: 1.35;
+    line-height: 1.45;
     gap: 20px;
   }
   .dim:last-child { border-bottom: 0; }
@@ -416,7 +392,6 @@
   }
   .dim .dv b { color: var(--cream); font-weight: 600; }
 
-  /* Event chips */
   .evt-chips { display: flex; flex-wrap: wrap; gap: 7px; }
   .evt {
     font-family: var(--mono);
@@ -428,20 +403,12 @@
     border: 1px solid var(--line);
     border-radius: 100px;
     padding: 5px 13px;
-    transition: border-color 150ms ease, color 150ms ease, background 150ms ease;
-    cursor: default;
-  }
-  .evt:hover {
-    background: var(--ink-3);
-    border-color: rgba(201,168,106,0.28);
   }
   .evt.hi {
     border-color: rgba(201,168,106,0.55);
     color: var(--gold);
   }
-  .evt.hi:hover { background: rgba(201,168,106,0.07); }
 
-  /* Facts grid */
   .facts {
     margin-top: 28px;
     display: grid;
@@ -461,7 +428,7 @@
     color: var(--taupe);
   }
   .fact .fv {
-    font-size: 23px;
+    font-size: 24px;
     color: var(--cream);
     margin-top: 5px;
     font-weight: 500;
@@ -476,7 +443,7 @@
     flex: 1;
     display: grid;
     grid-template-columns: 1fr 1.05fr;
-    gap: 72px;
+    gap: 80px;
     align-items: start;
   }
 
@@ -484,7 +451,7 @@
     background: var(--ink-2);
     border: 1px solid var(--line);
     border-radius: 6px;
-    padding: 40px 44px;
+    padding: 46px 48px;
     height: 100%;
   }
   .venue-card .vc-lab {
@@ -501,7 +468,7 @@
     display: flex;
     align-items: flex-start;
     gap: 22px;
-    padding: 20px 0;
+    padding: 24px 0;
     border-bottom: 1px solid var(--line);
   }
   .venue-goal:first-of-type { padding-top: 0; }
@@ -519,26 +486,20 @@
     color: var(--gold);
     font-weight: 600;
     margin-top: 5px;
-    transition: border-color 200ms ease, background 200ms ease;
-  }
-  .venue-goal:hover .vg-icon {
-    border-color: rgba(201,168,106,0.65);
-    background: rgba(201,168,106,0.06);
   }
   .venue-goal .vg-text {
-    font-size: 22px;
-    line-height: 1.4;
+    font-size: 23px;
+    line-height: 1.48;
     color: var(--cream-dim);
     text-wrap: pretty;
   }
   .venue-goal .vg-text b { color: var(--cream); font-weight: 600; }
 
-  /* Project goals (right column) */
   .goals { display: flex; flex-direction: column; }
   .goal {
     display: flex;
     gap: 24px;
-    padding: 22px 0;
+    padding: 26px 0;
     border-bottom: 1px solid var(--line);
   }
   .goal:first-child { padding-top: 0; }
@@ -553,8 +514,8 @@
     opacity: 0.8;
   }
   .goal .gt {
-    font-size: 27px;
-    line-height: 1.38;
+    font-size: 28px;
+    line-height: 1.46;
     color: var(--cream);
     text-wrap: pretty;
   }
@@ -567,28 +528,18 @@
     margin-top: 52px;
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 14px;
+    gap: 16px;
   }
 
   .phase {
     border: 1px solid var(--line);
     border-radius: 6px;
-    padding: 26px 22px 28px;
+    padding: 30px 24px 32px;
     background: var(--ink-2);
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 12px;
-    transition:
-      border-color 220ms ease,
-      box-shadow 220ms ease,
-      transform 220ms var(--ease-gentle);
-    cursor: default;
-  }
-  .phase:hover {
-    border-color: rgba(201,168,106,0.28);
-    box-shadow: 0 6px 24px rgba(0,0,0,0.4);
-    transform: translateY(-3px);
   }
   .phase .pn {
     font-family: var(--mono);
@@ -598,13 +549,13 @@
     text-transform: uppercase;
   }
   .phase .pt {
-    font-size: 26px;
+    font-size: 27px;
     font-weight: 600;
     color: var(--cream-dim);
     line-height: 1.1;
   }
   .phase .pd {
-    font-size: 18px;
+    font-size: 19px;
     line-height: 1.38;
     color: var(--taupe);
   }
@@ -632,12 +583,12 @@
   }
 
   .next-strip {
-    margin-top: 42px;
+    margin-top: 48px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 48px;
     border-top: 1px solid var(--line);
-    padding-top: 32px;
+    padding-top: 36px;
   }
   .ns { display: flex; gap: 22px; }
   .ns .nsn {
@@ -648,7 +599,7 @@
     flex-shrink: 0;
   }
   .ns .nst {
-    font-size: 25px;
+    font-size: 26px;
     line-height: 1.42;
     color: var(--cream-dim);
     text-wrap: pretty;
@@ -657,28 +608,21 @@
 
   /* ──────────────────────────────────────────────────────────────────────
      ENTRANCE ANIMATIONS
-     Rule: base style = final visible state. Animate FROM hidden.
-     All gated on [data-deck-active] so print & reduced-motion work.
+     Screen-only — no hover states anywhere.
+     Base style = final visible state; animate FROM hidden.
+     All gated on [data-deck-active] + prefers-reduced-motion.
   ────────────────────────────────────────────────────────────────────── */
-
-  /* ── Timing variables ─────────── */
-  :root {
-    --dur-fast:   0.38s;
-    --dur-base:   0.52s;
-    --dur-slow:   0.68s;
-  }
-
   @media (prefers-reduced-motion: no-preference) {
 
-    /* ── 1. Gold bar sweep (eyebrow accent) ─ */
+    /* 1. Gold bar sweep */
     .eyebrow .bar {
       transform: scaleX(0);
       transition: transform var(--dur-slow) var(--ease-out);
-      transition-delay: 0.1s;
+      transition-delay: 0.15s;
     }
     [data-deck-active] .eyebrow .bar { transform: scaleX(1); }
 
-    /* ── 2. Fade + rise (generic) ─────────── */
+    /* 2. Fade + rise — generic blocks */
     .anim {
       opacity: 0;
       transform: translateY(26px);
@@ -686,13 +630,13 @@
         opacity var(--dur-base) var(--ease-out),
         transform var(--dur-base) var(--ease-out);
     }
-    [data-deck-active] .anim                { opacity: 1; transform: none; }
-    [data-deck-active] .anim:nth-child(1)   { transition-delay: 0.0s; }
-    [data-deck-active] .anim:nth-child(2)   { transition-delay: 0.1s; }
-    [data-deck-active] .anim:nth-child(3)   { transition-delay: 0.2s; }
-    [data-deck-active] .anim:nth-child(4)   { transition-delay: 0.3s; }
+    [data-deck-active] .anim              { opacity: 1; transform: none; }
+    [data-deck-active] .anim:nth-child(1) { transition-delay: 0.00s; }
+    [data-deck-active] .anim:nth-child(2) { transition-delay: 0.10s; }
+    [data-deck-active] .anim:nth-child(3) { transition-delay: 0.20s; }
+    [data-deck-active] .anim:nth-child(4) { transition-delay: 0.30s; }
 
-    /* ── 3. Stats — stagger up ────────────── */
+    /* 3. Stats — stagger up */
     .stat {
       opacity: 0;
       transform: translateY(18px);
@@ -700,61 +644,51 @@
         opacity var(--dur-base) var(--ease-out),
         transform var(--dur-base) var(--ease-out);
     }
-    [data-deck-active] .stat                { opacity: 1; transform: none; }
-    [data-deck-active] .stat:nth-child(1)   { transition-delay: 0.32s; }
-    [data-deck-active] .stat:nth-child(2)   { transition-delay: 0.42s; }
-    [data-deck-active] .stat:nth-child(3)   { transition-delay: 0.52s; }
-    [data-deck-active] .stat:nth-child(4)   { transition-delay: 0.62s; }
+    [data-deck-active] .stat              { opacity: 1; transform: none; }
+    [data-deck-active] .stat:nth-child(1) { transition-delay: 0.36s; }
+    [data-deck-active] .stat:nth-child(2) { transition-delay: 0.46s; }
+    [data-deck-active] .stat:nth-child(3) { transition-delay: 0.56s; }
+    [data-deck-active] .stat:nth-child(4) { transition-delay: 0.66s; }
 
-    /* ── 4. Member cards — cascade ────────── */
+    /* 4. Member cards — cascade */
     .member {
       opacity: 0;
       transform: translateY(20px);
-      /* entrance transition — hover overrides transform after settle */
       transition:
         opacity var(--dur-base) var(--ease-out),
         transform var(--dur-base) var(--ease-out);
     }
     [data-deck-active] .member              { opacity: 1; transform: none; }
     [data-deck-active] .member:nth-child(1) { transition-delay: 0.18s; }
-    [data-deck-active] .member:nth-child(2) { transition-delay: 0.26s; }
-    [data-deck-active] .member:nth-child(3) { transition-delay: 0.34s; }
-    [data-deck-active] .member:nth-child(4) { transition-delay: 0.42s; }
-    [data-deck-active] .member:nth-child(5) { transition-delay: 0.50s; }
-    [data-deck-active] .member:nth-child(6) { transition-delay: 0.58s; }
-    /* Hand hover back to the hover transition after cards have settled */
-    [data-deck-active] .member:hover {
-      transform: translateY(-3px);
-      transition:
-        border-color 220ms ease,
-        box-shadow 220ms ease,
-        transform 220ms var(--ease-gentle);
-    }
+    [data-deck-active] .member:nth-child(2) { transition-delay: 0.27s; }
+    [data-deck-active] .member:nth-child(3) { transition-delay: 0.36s; }
+    [data-deck-active] .member:nth-child(4) { transition-delay: 0.45s; }
+    [data-deck-active] .member:nth-child(5) { transition-delay: 0.54s; }
+    [data-deck-active] .member:nth-child(6) { transition-delay: 0.63s; }
 
-    /* ── 5. Hub nodes flow down ───────────── */
-    .hub-node, .hub-arrow {
+    /* 5. Hub nodes — flow down the chain */
+    .hub-node,
+    .hub-arrow {
       opacity: 0;
       transform: translateY(14px);
       transition:
         opacity var(--dur-fast) var(--ease-out),
-        transform var(--dur-fast) var(--ease-out),
-        border-color 200ms ease;
+        transform var(--dur-fast) var(--ease-out);
     }
     [data-deck-active] .hub-node,
-    [data-deck-active] .hub-arrow          { opacity: 1; transform: none; }
-    /* Row-by-row stagger */
+    [data-deck-active] .hub-arrow                      { opacity: 1; transform: none; }
     [data-deck-active] .hub-row:nth-child(1) .hub-node { transition-delay: 0.22s; }
-    [data-deck-active] .hub-arrow:nth-child(2)          { transition-delay: 0.34s; }
-    [data-deck-active] .hub-row:nth-child(3) .hub-node  { transition-delay: 0.44s; }
-    [data-deck-active] .hub-arrow:nth-child(4)          { transition-delay: 0.54s; }
-    [data-deck-active] .hub-row:nth-child(5) .hub-node  { transition-delay: 0.64s; }
-    [data-deck-active] .hub-arrow:nth-child(6)          { transition-delay: 0.72s; }
-    [data-deck-active] .hub-row:nth-child(7) .hub-node  { transition-delay: 0.80s; }
+    [data-deck-active] .hub-arrow:nth-child(2)          { transition-delay: 0.36s; }
+    [data-deck-active] .hub-row:nth-child(3) .hub-node  { transition-delay: 0.48s; }
+    [data-deck-active] .hub-arrow:nth-child(4)          { transition-delay: 0.60s; }
+    [data-deck-active] .hub-row:nth-child(5) .hub-node  { transition-delay: 0.70s; }
+    [data-deck-active] .hub-arrow:nth-child(6)          { transition-delay: 0.80s; }
+    [data-deck-active] .hub-row:nth-child(7) .hub-node  { transition-delay: 0.90s; }
 
-    /* ── 6. Venue card — scale in ─────────── */
+    /* 6. Venue card — scale in */
     .anim-scale {
       opacity: 0;
-      transform: scale(0.96) translateY(12px);
+      transform: scale(0.97) translateY(12px);
       transition:
         opacity var(--dur-base) var(--ease-out),
         transform var(--dur-base) var(--ease-out);
@@ -762,35 +696,35 @@
     }
     [data-deck-active] .anim-scale { opacity: 1; transform: none; }
 
-    /* ── 7. Venue goals — slide from left ─── */
+    /* 7. Venue goals — slide in from left */
     .venue-goal {
       opacity: 0;
       transform: translateX(-18px);
       transition:
-        opacity 0.42s var(--ease-out),
-        transform 0.42s var(--ease-out);
+        opacity 0.46s var(--ease-out),
+        transform 0.46s var(--ease-out);
     }
-    [data-deck-active] .venue-goal             { opacity: 1; transform: none; }
+    [data-deck-active] .venue-goal              { opacity: 1; transform: none; }
     [data-deck-active] .venue-goal:nth-child(1) { transition-delay: 0.22s; }
-    [data-deck-active] .venue-goal:nth-child(2) { transition-delay: 0.32s; }
-    [data-deck-active] .venue-goal:nth-child(3) { transition-delay: 0.42s; }
-    [data-deck-active] .venue-goal:nth-child(4) { transition-delay: 0.52s; }
+    [data-deck-active] .venue-goal:nth-child(2) { transition-delay: 0.33s; }
+    [data-deck-active] .venue-goal:nth-child(3) { transition-delay: 0.44s; }
+    [data-deck-active] .venue-goal:nth-child(4) { transition-delay: 0.55s; }
 
-    /* ── 8. Project goals — slide from right ─ */
+    /* 8. Project goals — slide in from right */
     .goal {
       opacity: 0;
       transform: translateX(18px);
       transition:
-        opacity 0.42s var(--ease-out),
-        transform 0.42s var(--ease-out);
+        opacity 0.46s var(--ease-out),
+        transform 0.46s var(--ease-out);
     }
-    [data-deck-active] .goal             { opacity: 1; transform: none; }
+    [data-deck-active] .goal              { opacity: 1; transform: none; }
     [data-deck-active] .goal:nth-child(1) { transition-delay: 0.22s; }
-    [data-deck-active] .goal:nth-child(2) { transition-delay: 0.32s; }
-    [data-deck-active] .goal:nth-child(3) { transition-delay: 0.42s; }
-    [data-deck-active] .goal:nth-child(4) { transition-delay: 0.52s; }
+    [data-deck-active] .goal:nth-child(2) { transition-delay: 0.33s; }
+    [data-deck-active] .goal:nth-child(3) { transition-delay: 0.44s; }
+    [data-deck-active] .goal:nth-child(4) { transition-delay: 0.55s; }
 
-    /* ── 9. Phase cards — wave up ─────────── */
+    /* 9. Phase cards — wave up */
     .phase {
       opacity: 0;
       transform: translateY(22px);
@@ -800,43 +734,36 @@
     }
     [data-deck-active] .phase              { opacity: 1; transform: none; }
     [data-deck-active] .phase:nth-child(1) { transition-delay: 0.18s; }
-    [data-deck-active] .phase:nth-child(2) { transition-delay: 0.26s; }
-    [data-deck-active] .phase:nth-child(3) { transition-delay: 0.34s; }
-    [data-deck-active] .phase:nth-child(4) { transition-delay: 0.42s; }
-    [data-deck-active] .phase:nth-child(5) { transition-delay: 0.50s; }
-    [data-deck-active] .phase:nth-child(6) { transition-delay: 0.58s; }
-    [data-deck-active] .phase:hover {
-      transform: translateY(-3px);
-      transition:
-        border-color 220ms ease,
-        box-shadow 220ms ease,
-        transform 220ms var(--ease-gentle);
-    }
+    [data-deck-active] .phase:nth-child(2) { transition-delay: 0.27s; }
+    [data-deck-active] .phase:nth-child(3) { transition-delay: 0.36s; }
+    [data-deck-active] .phase:nth-child(4) { transition-delay: 0.45s; }
+    [data-deck-active] .phase:nth-child(5) { transition-delay: 0.54s; }
+    [data-deck-active] .phase:nth-child(6) { transition-delay: 0.63s; }
 
-    /* ── 10. Next strip ───────────────────── */
+    /* 10. Next strip — appears after CRISP-DM wave settles */
     .ns {
       opacity: 0;
       transform: translateY(16px);
       transition:
-        opacity 0.40s var(--ease-out),
-        transform 0.40s var(--ease-out);
+        opacity 0.44s var(--ease-out),
+        transform 0.44s var(--ease-out);
     }
-    [data-deck-active] .ns             { opacity: 1; transform: none; }
-    [data-deck-active] .ns:nth-child(1) { transition-delay: 0.72s; }
-    [data-deck-active] .ns:nth-child(2) { transition-delay: 0.82s; }
+    [data-deck-active] .ns              { opacity: 1; transform: none; }
+    [data-deck-active] .ns:nth-child(1) { transition-delay: 0.78s; }
+    [data-deck-active] .ns:nth-child(2) { transition-delay: 0.88s; }
 
-    /* ── 11. "We are here" pulse ──────────── */
+    /* 11. "We are here" ambient pulse */
     @keyframes now-pulse {
-      0%, 100% { box-shadow: 0 0 0 1px rgba(201,168,106,0.45), 0 0 14px rgba(201,168,106,0.06); }
-      50%       { box-shadow: 0 0 0 1px rgba(201,168,106,0.80), 0 0 28px rgba(201,168,106,0.15); }
+      0%, 100% { box-shadow: 0 0 0 1px rgba(201,168,106,0.40), 0 0 14px rgba(201,168,106,0.05); }
+      50%       { box-shadow: 0 0 0 1px rgba(201,168,106,0.75), 0 0 28px rgba(201,168,106,0.14); }
     }
     [data-deck-active] .phase.now {
-      animation: now-pulse 3s ease-in-out infinite;
-      animation-delay: 0.9s;
+      animation: now-pulse 3.2s ease-in-out infinite;
+      animation-delay: 1.0s;
     }
   }
 
-  /* ── Print: everything visible, no transforms ─────────────────────── */
+  /* ── Print ───────────────────────────────────────────────────────────── */
   @media print {
     .anim, .anim-scale, .stat, .member, .venue-goal, .goal,
     .phase, .hub-node, .hub-arrow, .ns {
@@ -1087,7 +1014,6 @@
 
       <div class="s4-body">
 
-        <!-- Left — Venue goals (from theglasshouses.com) -->
         <div class="venue-card anim-scale">
           <div class="vc-lab">The Glasshouses — what they're optimizing for</div>
 
@@ -1112,7 +1038,6 @@
           </div>
         </div>
 
-        <!-- Right — MLiQ goals -->
         <div class="goals">
           <div class="goal">
             <div class="gn">01</div>
