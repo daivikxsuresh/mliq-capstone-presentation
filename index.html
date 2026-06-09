@@ -488,8 +488,8 @@
     margin-top: 5px;
   }
   .venue-goal .vg-text {
-    font-size: 23px;
-    line-height: 1.48;
+    font-size: 26px;
+    line-height: 1.46;
     color: var(--cream-dim);
     text-wrap: pretty;
   }
@@ -514,8 +514,8 @@
     opacity: 0.8;
   }
   .goal .gt {
-    font-size: 28px;
-    line-height: 1.46;
+    font-size: 31px;
+    line-height: 1.44;
     color: var(--cream);
     text-wrap: pretty;
   }
@@ -761,6 +761,70 @@
       animation: now-pulse 3.2s ease-in-out infinite;
       animation-delay: 1.0s;
     }
+
+    /* 12. Slide 2 — member name + card border glow */
+    @keyframes name-glow {
+      0%, 100% { text-shadow: none; }
+      50%       { text-shadow: 0 0 28px rgba(201,168,106,0.22), 0 0 56px rgba(201,168,106,0.08); }
+    }
+    @keyframes card-glow {
+      0%, 100% { border-color: var(--line); box-shadow: none; }
+      50%       { border-color: rgba(201,168,106,0.25); box-shadow: 0 0 0 1px rgba(201,168,106,0.10), 0 4px 28px rgba(0,0,0,0.28); }
+    }
+    [data-deck-active] .member:nth-child(1) { animation: card-glow 5s ease-in-out infinite 0.0s; }
+    [data-deck-active] .member:nth-child(2) { animation: card-glow 5s ease-in-out infinite 0.9s; }
+    [data-deck-active] .member:nth-child(3) { animation: card-glow 5s ease-in-out infinite 1.8s; }
+    [data-deck-active] .member:nth-child(4) { animation: card-glow 5s ease-in-out infinite 2.7s; }
+    [data-deck-active] .member:nth-child(5) { animation: card-glow 5s ease-in-out infinite 3.6s; }
+    [data-deck-active] .member:nth-child(6) { animation: card-glow 5s ease-in-out infinite 4.5s; }
+    [data-deck-active] .member:nth-child(1) .mname { animation: name-glow 5s ease-in-out infinite 0.0s; }
+    [data-deck-active] .member:nth-child(2) .mname { animation: name-glow 5s ease-in-out infinite 0.9s; }
+    [data-deck-active] .member:nth-child(3) .mname { animation: name-glow 5s ease-in-out infinite 1.8s; }
+    [data-deck-active] .member:nth-child(4) .mname { animation: name-glow 5s ease-in-out infinite 2.7s; }
+    [data-deck-active] .member:nth-child(5) .mname { animation: name-glow 5s ease-in-out infinite 3.6s; }
+    [data-deck-active] .member:nth-child(6) .mname { animation: name-glow 5s ease-in-out infinite 4.5s; }
+
+    /* 13. Slide 3 — hub lifecycle travelling signal */
+    @keyframes node-signal {
+      0%   { border-color: rgba(201,168,106,0.55); box-shadow: 0 0 18px rgba(201,168,106,0.12); }
+      14%  { border-color: var(--line); box-shadow: none; }
+      100% { border-color: var(--line); box-shadow: none; }
+    }
+    @keyframes node-signal-center {
+      0%   { box-shadow: 0 0 0 1px rgba(201,168,106,0.55), 0 0 24px rgba(201,168,106,0.22); }
+      14%  { box-shadow: none; }
+      100% { box-shadow: none; }
+    }
+    @keyframes arrow-signal {
+      0%   { opacity: 1; color: var(--gold-soft); }
+      14%  { opacity: 0.6; color: var(--taupe); }
+      100% { opacity: 0.6; color: var(--taupe); }
+    }
+    [data-deck-active] .hub-row:nth-child(1) .hub-node        { animation: node-signal        7s ease-in-out infinite 0s; }
+    [data-deck-active] .hub-arrow:nth-child(2)                { animation: arrow-signal        7s ease-in-out infinite 1s; }
+    [data-deck-active] .hub-row:nth-child(3) .hub-node.center { animation: node-signal-center  7s ease-in-out infinite 2s; }
+    [data-deck-active] .hub-arrow:nth-child(4)                { animation: arrow-signal        7s ease-in-out infinite 3s; }
+    [data-deck-active] .hub-row:nth-child(5) .hub-node        { animation: node-signal         7s ease-in-out infinite 4s; }
+    [data-deck-active] .hub-arrow:nth-child(6)                { animation: arrow-signal        7s ease-in-out infinite 5s; }
+    [data-deck-active] .hub-row:nth-child(7) .hub-node        { animation: node-signal         7s ease-in-out infinite 6s; }
+
+    /* 14. Slide 4 — venue card pulse + goal row scan */
+    @keyframes venue-card-pulse {
+      0%, 100% { box-shadow: 0 0 0 1px rgba(201,168,106,0.18); }
+      50%       { box-shadow: 0 0 0 1px rgba(201,168,106,0.45), 0 0 28px rgba(201,168,106,0.08); }
+    }
+    @keyframes goal-scan {
+      0%, 100% { box-shadow: inset 3px 0 0 0 transparent; }
+      15%, 85% { box-shadow: inset 3px 0 0 0 rgba(201,168,106,0.38); }
+    }
+    [data-deck-active] .venue-card {
+      animation: venue-card-pulse 4s ease-in-out infinite;
+      animation-delay: 0.6s;
+    }
+    [data-deck-active] .goal:nth-child(1) { animation: goal-scan 4s ease-in-out infinite 0s; }
+    [data-deck-active] .goal:nth-child(2) { animation: goal-scan 4s ease-in-out infinite 1s; }
+    [data-deck-active] .goal:nth-child(3) { animation: goal-scan 4s ease-in-out infinite 2s; }
+    [data-deck-active] .goal:nth-child(4) { animation: goal-scan 4s ease-in-out infinite 3s; }
   }
 
   /* ── Print ───────────────────────────────────────────────────────────── */
@@ -801,19 +865,19 @@
 
       <div class="stat-row anim">
         <div class="stat">
-          <div class="fig">223</div>
+          <div class="fig" data-target="223" data-prefix="" data-suffix="">223</div>
           <div class="lab">Booked event-days<br /><b>in 2025</b></div>
         </div>
         <div class="stat">
-          <div class="fig">~80</div>
+          <div class="fig" data-target="80" data-prefix="~" data-suffix="">~80</div>
           <div class="lab">In-season days<br /><b>left empty</b></div>
         </div>
         <div class="stat">
-          <div class="fig">$111K</div>
+          <div class="fig" data-target="111" data-prefix="$" data-suffix="K">$111K</div>
           <div class="lab">Average revenue<br /><b>per booked day</b></div>
         </div>
         <div class="stat">
-          <div class="fig">~$8.9M</div>
+          <div class="fig" data-target="8.9" data-prefix="~$" data-suffix="M" data-decimals="1">~$8.9M</div>
           <div class="lab">Uncaptured capacity<br /><b>the engine fights for</b></div>
         </div>
       </div>
@@ -1129,5 +1193,62 @@
 
 </deck-stage>
 <script src="deck-stage.js"></script>
+<script>
+(function () {
+  var deck = document.querySelector('deck-stage');
+  var rafIds = [], staggers = [], loopTimer = null;
+
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function runCounter(el) {
+    var target   = parseFloat(el.dataset.target);
+    var prefix   = el.dataset.prefix  || '';
+    var suffix   = el.dataset.suffix  || '';
+    var decimals = parseInt(el.dataset.decimals || '0', 10);
+    var dur = 1800, start = null;
+    function tick(ts) {
+      if (!start) start = ts;
+      var p = Math.min((ts - start) / dur, 1);
+      el.textContent = prefix + (target * easeOut(p)).toFixed(decimals) + suffix;
+      if (p < 1) rafIds.push(requestAnimationFrame(tick));
+    }
+    rafIds.push(requestAnimationFrame(tick));
+  }
+
+  function stop() {
+    rafIds.forEach(cancelAnimationFrame); rafIds = [];
+    staggers.forEach(clearTimeout);       staggers = [];
+    clearTimeout(loopTimer);              loopTimer = null;
+  }
+
+  function go() {
+    stop();
+    var figs = document.querySelectorAll('section[data-label="Theme"] .fig[data-target]');
+    figs.forEach(function (el, i) {
+      el.textContent = (el.dataset.prefix || '') + '0' + (el.dataset.suffix || '');
+      staggers.push(setTimeout(function () { runCounter(el); }, i * 150));
+    });
+    loopTimer = setTimeout(go, 1800 + (figs.length - 1) * 150 + 2000);
+  }
+
+  function resetFigs() {
+    document.querySelectorAll('section[data-label="Theme"] .fig[data-target]').forEach(function (el) {
+      var d = parseInt(el.dataset.decimals || '0', 10);
+      el.textContent = (el.dataset.prefix || '') + parseFloat(el.dataset.target).toFixed(d) + (el.dataset.suffix || '');
+    });
+  }
+
+  if (!deck) return;
+
+  deck.addEventListener('slidechange', function (e) {
+    if (e.detail.index === 0) { go(); }
+    else { stop(); resetFigs(); }
+  });
+
+  // handle initial active state if deck starts on slide 1
+  var first = document.querySelector('section[data-label="Theme"]');
+  if (first && first.hasAttribute('data-deck-active')) go();
+})();
+</script>
 </body>
 </html>
