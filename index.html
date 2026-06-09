@@ -1211,18 +1211,16 @@
   var deck = document.querySelector('deck-stage');
   var rafIds = [], timers = [], loopTimer = null;
 
-  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
-
   function runCounter(el, done) {
     var target   = parseFloat(el.dataset.target);
     var prefix   = el.dataset.prefix  || '';
     var suffix   = el.dataset.suffix  || '';
     var decimals = parseInt(el.dataset.decimals || '0', 10);
-    var dur = 1400, start = null;
+    var dur = 1100, start = null;
     function tick(ts) {
       if (!start) start = ts;
       var p = Math.min((ts - start) / dur, 1);
-      el.textContent = prefix + (target * easeOut(p)).toFixed(decimals) + suffix;
+      el.textContent = prefix + (target * p).toFixed(decimals) + suffix;
       if (p < 1) { rafIds.push(requestAnimationFrame(tick)); }
       else if (done) { done(); }
     }
